@@ -2,16 +2,23 @@ import { app, config, watcher } from '../core/_index';
 import { HttpRequest, HttpResponse } from '@benjamin-hugueley/magic';
 
 /**
- * Registers an endpoint to watch for file events and stream them over HTTP.
+ * Establishes an event stream for monitoring file changes.
  */
 function eventStreams(): void {
   app.get('/event-streams/watch', (req: HttpRequest, res: HttpResponse) => {
-    // Initialize a global watcher if not already set.
+    /**
+     * Initializes the file watcher if it has not already been set.
+     */
     if (!(global as any).watcher) {
       (global as any).watcher = watcher(config.PUBLIC_DIR);
     }
 
-    // Define a callback to be invoked when a file change is detected.
+    /**
+     * Handles file change events and sends updates to the client.
+     *
+     * @param event - The type of file event detected.
+     * @param path - The file path that changed.
+     */
     const onChange = (event: string, path: string): void => {
       res.send({
         body: { event, path },
@@ -19,10 +26,14 @@ function eventStreams(): void {
       });
     };
 
-    // Subscribe to file changes.
+    /**
+     * Subscribes to file change events.
+     */
     (global as any).watcher.subscribe(onChange);
 
-    // Set up the HTTP response with appropriate headers and event handlers.
+    /**
+     * Configures the response for an event stream connection.
+     */
     res.send({
       headers: {
         'Content-Type': 'text/event-stream',

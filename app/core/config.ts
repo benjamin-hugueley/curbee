@@ -1,13 +1,28 @@
 import { join } from 'path';
 
+/**
+ * Defines the configuration structure for the application.
+ */
 interface Config {
+  /** The environment in which the application is running. */
   ENVIRONMENT: string;
+
+  /** The public directory for serving static files. */
   PUBLIC_DIR: string;
+
+  /** Supported HTTP methods. */
   HTTP_METHODS: string[];
+
+  /** Security headers applied to all HTTP responses. */
   SECURITY_HEADERS: Record<string, string>;
+
+  /** MIME type mappings for file extensions. */
   MIME_TYPES: Record<string, string>;
 }
 
+/**
+ * Application configuration settings.
+ */
 const config: Config = {
   ENVIRONMENT: process.env.ENVIRONMENT ?? 'local',
   PUBLIC_DIR: process.env.PUBLIC_DIRECTORY ?? join(process.cwd(), 'site'),
@@ -56,6 +71,9 @@ const config: Config = {
   }
 };
 
+/**
+ * Enhances security headers for non-local environments.
+ */
 if (config.ENVIRONMENT !== 'local') {
   config.SECURITY_HEADERS['content-security-policy'] += '; upgrade-insecure-requests';
 }
