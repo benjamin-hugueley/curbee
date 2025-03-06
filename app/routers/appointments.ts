@@ -33,9 +33,9 @@ function appointments(): void {
     /**
      * Checks if the appointment already exists.
      */
-    if (repositories.appointments.exists(appointment)) {
+    if (repositories.appointments.conflicts(appointment)) {
       res.send({
-        body: { error: "Duplicate appointment detected" },
+        body: { error: "Time not available: Scheduling conflict detected." },
         headers: { 'Content-Type': 'application/json' },
         status: 409,
       });

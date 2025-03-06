@@ -30,6 +30,8 @@ export function Appointment(
 
   const data = obj as { [key: string]: any };
 
+  console.log(data);
+
   /**
    * Validates the appointment date and time.
    */

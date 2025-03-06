@@ -25,16 +25,22 @@ export const appointments = {
   },
 
   /**
-   * Checks if an appointment already exists.
-   * Compares the appointment date and customer email to detect duplicates.
+   * Checks if an appointment conflicts with an existing one.
+   * Determines if the new appointment's time period overlaps with any existing appointment.
    *
    * @param appointment - The appointment to check.
-   * @returns A boolean indicating whether the appointment exists.
+   * @returns A boolean indicating whether there is a scheduling conflict.
    */
-  exists(appointment: Appointment): boolean {
-    return appointmentsData.some(existing =>
-      new Date(existing.appointmentDateTime).getTime() === new Date(appointment.appointmentDateTime).getTime() &&
-      existing.customer.email === appointment.customer.email
-    );
+  conflicts(appointment: Appointment): boolean {
+    const newStart = new Date(appointment.appointmentDateTime).getTime();
+    const newEnd = newStart + appointment.appointmentDuration * 60 * 1000; // Convert minutes to milliseconds
+
+    return appointmentsData.some(existing => {
+      const existingStart = new Date(existing.appointmentDateTime).getTime();
+      const existingEnd = existingStart + existing.appointmentDuration * 60 * 1000;
+
+      // Check if the two time periods intersect
+      return newStart < existingEnd && newEnd > existingStart;
+    });
   }
 };
